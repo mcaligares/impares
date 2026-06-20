@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1781577372567,
+      "tag": "20260616023612_curved_glorian",
+      "breakpoints": true
+    }
+  ]
+}
