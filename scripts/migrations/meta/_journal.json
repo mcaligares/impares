@@ -8,6 +8,13 @@
       "when": 1781577372567,
       "tag": "20260616023612_curved_glorian",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1782090474842,
+      "tag": "20260622010754_heavy_paper_doll",
+      "breakpoints": true
     }
   ]
 }
