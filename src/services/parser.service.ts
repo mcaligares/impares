@@ -1,4 +1,4 @@
-import { importConfig } from '@/config/import.config';
+import { parserConfig } from '@/config/parser.config';
 import { slugify, disambiguateSlugs } from '@/utils/slug';
 import type { PlayerWeight } from '@/entities/player/player.schema';
 
@@ -20,7 +20,7 @@ export type ParseWarning = {
   reason: string;
 };
 
-export type ParsedRoster = {
+export type ParsedPlainTeam = {
   match: ParsedMatch | null;
   players: ParsedPlayer[];
   warnings: ParseWarning[];
@@ -29,7 +29,7 @@ export type ParsedRoster = {
 const PLAYER_LINE = /^(\d+)\s*-\s*(.+)$/;
 const DATE_TIME = /(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?(?:\s+(\d{1,2}):(\d{2}))?/;
 
-const WEIGHT_TOKENS: readonly string[] = importConfig.weightTokens;
+const WEIGHT_TOKENS: readonly string[] = parserConfig.weightTokens;
 
 function normalizeYear(raw: string): number {
   const value = Number(raw);
@@ -54,7 +54,7 @@ function parseHeader(line: string, match: RegExpMatchArray, defaultYear: number)
 
 type RawEntry = { order: number; name: string; weight?: PlayerWeight };
 
-export function parseRosterText(raw: string, defaultYear: number): ParsedRoster {
+export function parsePlainTeam(raw: string, defaultYear: number): ParsedPlainTeam {
   const warnings: ParseWarning[] = [];
   const entries: RawEntry[] = [];
   let match: ParsedMatch | null = null;

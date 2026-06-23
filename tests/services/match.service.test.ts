@@ -1,12 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createMockDb } from '../helpers/mock-db';
-import {
-  createPlayerWithSlug,
-  createMatch,
-  createSquad,
-  createRosterText,
-} from '../factories/import.factory';
-import { importTeam } from '@/services/import.service';
+import { createPlayerWithSlug, createMatch, createSquad } from '../factories/match.factory';
+import { registerMatch } from '@/services/match.service';
+import type { ParsedPlainTeam } from '@/services/parser.service';
 
 vi.mock('@/repositories/match.repository', () => ({ insertMatch: vi.fn() }));
 vi.mock('@/repositories/squad.repository', () => ({
@@ -21,7 +17,15 @@ const squadRepo = await import('@/repositories/squad.repository');
 const playerRepo = await import('@/repositories/player.repository');
 const lineupRepo = await import('@/repositories/match-player.repository');
 
-describe('importTeam', () => {
+function parsedWith(...names: string[]): ParsedPlainTeam {
+  return {
+    match: { title: 'Futbol Lujan', location: 'Futbol Lujan', date: new Date() },
+    players: names.map((name, index) => ({ order: index + 1, name, slug: name.toLowerCase() })),
+    warnings: [],
+  };
+}
+
+describe('registerMatch', () => {
   beforeEach(() => vi.clearAllMocks());
 
   it('creates the match, upserts players, links the lineup as unassigned, and records the squad', async () => {
@@ -33,7 +37,7 @@ describe('importTeam', () => {
       .mockResolvedValueOnce({ player: createPlayerWithSlug('mati', 'mati'), inserted: true })
       .mockResolvedValueOnce({ player: createPlayerWithSlug('gonza', 'Gonza'), inserted: false });
 
-    const result = await importTeam(db, { raw: createRosterText(['mati', 'Gonza']) });
+    const result = await registerMatch(db, parsedWith('mati', 'Gonza'));
 
     expect(result.matchId).toBe('match-1');
     expect(result.createdCount).toBe(1);
@@ -50,19 +54,13 @@ describe('importTeam', () => {
     });
   });
 
-  it('throws and creates nothing when no players are parsed', async () => {
-    const db = createMockDb();
-    await expect(importTeam(db, { raw: '   ' })).rejects.toThrow('No players');
-    expect(matchRepo.insertMatch).not.toHaveBeenCalled();
-  });
-
   it('marks the squad failed when persistence breaks mid-pipeline', async () => {
     const db = createMockDb();
     vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 'match-1' }));
     vi.mocked(squadRepo.insertSquad).mockResolvedValue(createSquad({ id: 'squad-1' }));
     vi.mocked(playerRepo.upsertPlayerBySlug).mockRejectedValue(new Error('db down'));
 
-    await expect(importTeam(db, { raw: createRosterText(['mati']) })).rejects.toThrow('db down');
+    await expect(registerMatch(db, parsedWith('mati'))).rejects.toThrow('db down');
 
     expect(squadRepo.updateSquadStatus).toHaveBeenCalledWith(
       db,

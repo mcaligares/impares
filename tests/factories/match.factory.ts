@@ -53,7 +53,7 @@ export function createSquad(overrides: Partial<Squad> = {}): Squad {
   };
 }
 
-export function createRosterText(
+export function createPlainTeamText(
   names: string[],
   header = 'Futbol Lujan - 10/06 20:30hs',
 ): string {

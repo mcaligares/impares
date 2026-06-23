@@ -1,5 +1,4 @@
 import { logger } from '@/lib/logger';
-import { parseRosterText, type ParseWarning } from '@/utils/roster-parser';
 import { weightToAttributes, toLineupRows } from './transformers';
 import { insertMatch } from '@/repositories/match.repository';
 import { insertSquad, updateSquadStatus } from '@/repositories/squad.repository';
@@ -7,27 +6,21 @@ import { upsertPlayerBySlug } from '@/repositories/player.repository';
 import { insertMatchPlayers } from '@/repositories/match-player.repository';
 import type { DbClient } from '@/repositories/types';
 import type { PlayerAttributes } from '@/entities/player/player.schema';
+import type { ParsedPlainTeam } from '@/services/parser.service';
 
-const log = logger.service('import');
+const log = logger.service('match');
 
-export type ImportTeamInput = {
-  raw: string;
-};
-
-export type ImportTeamResult = {
+export type RegisterMatchResult = {
   matchId: string;
   createdCount: number;
   updatedCount: number;
-  warnings: ParseWarning[];
 };
 
-export async function importTeam(db: DbClient, input: ImportTeamInput): Promise<ImportTeamResult> {
-  log('importTeam', 'start', {});
-
-  const parsed = parseRosterText(input.raw, new Date().getFullYear());
-  if (parsed.players.length === 0) {
-    throw new Error('No players found in the pasted text');
-  }
+export async function registerMatch(
+  db: DbClient,
+  parsed: ParsedPlainTeam,
+): Promise<RegisterMatchResult> {
+  log('registerMatch', 'start', { players: parsed.players.length });
 
   const match = await insertMatch(db, {
     match_date: parsed.match?.date ?? new Date(),
@@ -36,7 +29,6 @@ export async function importTeam(db: DbClient, input: ImportTeamInput): Promise<
 
   const batch = await insertSquad(db, {
     match_id: match.id,
-    source: input.raw,
     status: 'pending',
     row_count: parsed.players.length,
   });
@@ -65,10 +57,10 @@ export async function importTeam(db: DbClient, input: ImportTeamInput): Promise<
       updated_count: updatedCount,
     });
 
-    log('importTeam', 'done', { matchId: match.id, createdCount, updatedCount });
-    return { matchId: match.id, createdCount, updatedCount, warnings: parsed.warnings };
+    log('registerMatch', 'done', { matchId: match.id, createdCount, updatedCount });
+    return { matchId: match.id, createdCount, updatedCount };
   } catch (err) {
-    log.error('importTeam', 'failed', { err });
+    log.error('registerMatch', 'failed', { err });
     await updateSquadStatus(db, batch.id, { status: 'failed', error: String(err) });
     throw err;
   }
