@@ -1,6 +1,9 @@
 import { logger } from '@/lib/logger';
 import { appConfig } from '@/config/app.config';
-import { toPlayerAttributes, toLineupRows, toMatchTeams, toRecentMatches } from './transformers';
+import { balanceConfig } from '@/config/balance.config';
+import { scorePlayer } from '@/services/scoring.service';
+import { balanceTeams } from '@/services/balance.service';
+import { toPlayerAttributes, toLineupRows, toScoredLineup, toMatchTeams, toRecentMatches } from './transformers';
 import { insertMatch, findMatchById, findRecentMatches } from '@/repositories/match.repository';
 import { insertSquad, updateSquadStatus } from '@/repositories/squad.repository';
 import { upsertPlayerBySlug } from '@/repositories/player.repository';
@@ -45,6 +48,10 @@ export async function registerMatch(
 ): Promise<RegisterMatchResult> {
   log('registerMatch', 'start', { players: parsed.players.length });
 
+  if (parsed.players.length < balanceConfig.minPlayers) {
+    throw new Error(`At least ${balanceConfig.minPlayers} players are required to balance teams`);
+  }
+
   const match = await insertMatch(db, {
     match_date: parsed.match?.date ?? new Date(),
     location: parsed.match?.location ?? null,
@@ -73,7 +80,9 @@ export async function registerMatch(
       lineup.push({ playerId: player.id, attributes });
     }
 
-    await insertMatchPlayers(db, toLineupRows(match.id, batch.id, lineup));
+    const balanced = balanceTeams(toScoredLineup(lineup, scorePlayer));
+
+    await insertMatchPlayers(db, toLineupRows(match.id, batch.id, lineup, balanced));
     await updateSquadStatus(db, batch.id, {
       status: 'processed',
       created_count: createdCount,
