@@ -12,4 +12,10 @@ describe('registerMatchFromText', () => {
     expect(result.success).toBe(false);
     expect(result.message).toMatch(/No players/);
   });
+
+  it('returns an error when there are too few players to make teams', async () => {
+    const result = await registerMatchFromText('Futbol Lujan - 10/06 20:30hs\n1- Solo');
+    expect(result.success).toBe(false);
+    expect(result.message).toMatch(/al menos 2/);
+  });
 });
