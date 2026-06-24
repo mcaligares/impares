@@ -5,7 +5,7 @@ export const appConfig = {
     defaultPageSize: 20,
     maxPageSize: 100,
   },
-  voter: {
+  guest: {
     nameMaxLength: 40,
   },
   upload: {

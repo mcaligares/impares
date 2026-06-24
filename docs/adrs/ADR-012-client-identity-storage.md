@@ -6,14 +6,14 @@ Accepted — June 2026
 
 ## Context
 
-The app needs a lightweight, account-less way to recognize a returning user so that upcoming features can attribute and **deduplicate votes** (on the matchup and on player characteristics). This is intentionally separate from real authentication (Better Auth, see [ADR-004](ADR-004-authentication.md)); the unit is an anonymous `voter` (an id + a name).
+The app needs a lightweight, account-less way to recognize a returning user so that upcoming features can attribute and **deduplicate votes** (on the matchup and on player characteristics). This is intentionally separate from real authentication (Better Auth, see [ADR-004](ADR-004-authentication.md)); the unit is an anonymous `guest` (an id + a name).
 
-The browser must carry a stable identifier between visits, and — critically — the **server must be able to read that identifier**, because voting runs through Next.js Server Actions that write to the database (see the `add-voter-session` change). The two realistic browser-side storage mechanisms behave very differently on that point:
+The browser must carry a stable identifier between visits, and — critically — the **server must be able to read that identifier**, because voting runs through Next.js Server Actions that write to the database (see the `add-guest-session` change). The two realistic browser-side storage mechanisms behave very differently on that point:
 
 - **Cookies** are sent automatically with every request, so the server reads them directly; they can be marked `httpOnly` (invisible to JavaScript).
 - **`localStorage`** lives only in the browser; it is never transmitted, so the server can only ever see it if the client manually copies the value into every request body.
 
-We need to choose where the anonymous voter id lives.
+We need to choose where the anonymous guest id lives.
 
 ## Decision Drivers
 
@@ -61,14 +61,14 @@ A cookie set/read by client JavaScript.
 
 ## Decision
 
-**Use an `httpOnly` cookie** to store the anonymous voter id.
+**Use an `httpOnly` cookie** to store the anonymous guest id.
 
 Rationale:
 
-1. **Voting is server-side.** Server Actions need the identity to look up / create the `voter` and dedupe votes. A cookie arrives automatically; `localStorage` would force every action to receive the id as an argument, which is fragile and trivially spoofable.
+1. **Voting is server-side.** Server Actions need the identity to look up / create the `guest` and dedupe votes. A cookie arrives automatically; `localStorage` would force every action to receive the id as an argument, which is fragile and trivially spoofable.
 2. **`httpOnly` keeps it out of reach of page scripts** — not readable by XSS, not editable by a curious user via devtools. The id is a server-managed handle, not page state.
 3. **It fits the layered architecture cleanly**: a single cookie helper in `src/lib/session/` is the only place touching `cookies()`; services stay DB-only with no HTTP concerns.
-4. The name (the human-facing label) lives in the DB on the `voter` row, not in the cookie, so it can be joined and displayed by future voting features and cannot be tampered with client-side.
+4. The name (the human-facing label) lives in the DB on the `guest` row, not in the cookie, so it can be joined and displayed by future voting features and cannot be tampered with client-side.
 
 `localStorage` would be acceptable only for purely client-side, non-authoritative state. Identity that the server must trust for write operations is not that.
 
@@ -82,7 +82,7 @@ Rationale:
 
 ### Negative / Trade-offs
 
-- **Cookies in Next.js 16 can only be written from a Server Action or Route Handler** (the async `cookies()` API), not during Server Component render. Mitigation: identity is established through the `identifyVoter` action, which is where the cookie is set anyway.
+- **Cookies in Next.js 16 can only be written from a Server Action or Route Handler** (the async `cookies()` API), not during Server Component render. Mitigation: identity is established through the `identifyGuest` action, which is where the cookie is set anyway.
 - **Clearing cookies / switching browser drops the identity** (reappears as anonymous). Mitigation: acceptable for a casual tool; long `max-age` reduces friction.
 - **`httpOnly` means the client cannot read the id directly.** The current name is surfaced to the UI from the server instead. Acceptable — the UI never needs the raw id.
 - **No anti-abuse on its own** — a user can clear the cookie or re-identify under another name. Out of scope here; to be addressed by the voting change (and optionally by linking to a Better Auth account).

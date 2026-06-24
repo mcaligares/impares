@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS "voter" (
+CREATE TABLE IF NOT EXISTS "guest" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,

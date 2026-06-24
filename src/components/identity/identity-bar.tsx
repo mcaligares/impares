@@ -2,23 +2,23 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import type { Voter } from '@/entities/voter/voter.entity';
+import type { Guest } from '@/entities/guest/guest.entity';
 
 type IdentityBarProps = {
-  voter: Voter | null;
+  guest: Guest | null;
   onIdentify: (name: string) => void;
   busy?: boolean;
 };
 
-export function IdentityBar({ voter, onIdentify, busy = false }: IdentityBarProps) {
+export function IdentityBar({ guest, onIdentify, busy = false }: IdentityBarProps) {
   const [name, setName] = useState('');
   const [editing, setEditing] = useState(false);
 
-  if (voter && !editing) {
+  if (guest && !editing) {
     return (
       <div className="flex items-center gap-2 text-sm">
         <span className="text-muted">Sos</span>
-        <span className="font-display uppercase tracking-wide text-cyan">{voter.name}</span>
+        <span className="font-display uppercase tracking-wide text-cyan">{guest.name}</span>
         <button
           type="button"
           onClick={() => setEditing(true)}
@@ -44,7 +44,7 @@ export function IdentityBar({ voter, onIdentify, busy = false }: IdentityBarProp
       <input
         value={name}
         onChange={(event) => setName(event.target.value)}
-        placeholder={voter ? voter.name : 'Tu nombre'}
+        placeholder={guest ? guest.name : 'Tu nombre'}
         maxLength={40}
         className="w-36 rounded-lg border border-line bg-surface/60 px-3 py-2 text-sm text-white outline-none transition placeholder:text-muted/60 focus:border-cyan"
       />

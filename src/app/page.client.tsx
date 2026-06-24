@@ -3,20 +3,20 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { registerMatchFromText } from '@/actions/match.actions';
-import { identifyVoter } from '@/actions/voter.actions';
+import { identifyGuest } from '@/actions/guest.actions';
 import { RegisterForm } from '@/components/match/register-form';
 import { MatchList } from '@/components/match/match-list';
 import { IdentityBar } from '@/components/identity/identity-bar';
 import { Confetti } from '@/components/ui/confetti';
 import type { RecentMatch } from '@/services/match.service';
-import type { Voter } from '@/entities/voter/voter.entity';
+import type { Guest } from '@/entities/guest/guest.entity';
 
 export function HomeClient({
   initialMatches,
-  voter,
+  guest,
 }: {
   initialMatches: RecentMatch[];
-  voter: Voter | null;
+  guest: Guest | null;
 }) {
   const router = useRouter();
   const [error, setError] = useState<string | undefined>();
@@ -37,7 +37,7 @@ export function HomeClient({
 
   const handleIdentify = (name: string) => {
     startIdentify(async () => {
-      await identifyVoter(name);
+      await identifyGuest(name);
       router.refresh();
     });
   };
@@ -47,7 +47,7 @@ export function HomeClient({
       <Confetti />
 
       <div className="a-fade-up mb-10 flex justify-end">
-        <IdentityBar voter={voter} onIdentify={handleIdentify} busy={identifying} />
+        <IdentityBar guest={guest} onIdentify={handleIdentify} busy={identifying} />
       </div>
 
       <header className="a-fade-up mb-12 text-center">
