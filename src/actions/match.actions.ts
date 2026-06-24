@@ -3,7 +3,14 @@
 import { db } from '@/lib/db';
 import { logger } from '@/lib/logger';
 import { parsePlainTeam, type ParseWarning } from '@/services/parser.service';
-import { registerMatch, type RegisterMatchResult } from '@/services/match.service';
+import {
+  registerMatch,
+  getMatchTeams as getMatchTeamsService,
+  listRecentMatches as listRecentMatchesService,
+  type RegisterMatchResult,
+  type MatchTeams,
+  type RecentMatch,
+} from '@/services/match.service';
 import type { ActionResponse } from '@/actions/types';
 
 const log = logger.action('match');
@@ -28,5 +35,29 @@ export async function registerMatchFromText(raw: string): Promise<ActionResponse
   } catch (err) {
     log.error('registerMatchFromText', 'failed', { err });
     return { success: false, error: String(err), message: 'Could not register the match' };
+  }
+}
+
+export async function getMatchTeams(matchId: string): Promise<ActionResponse<MatchTeams>> {
+  log('getMatchTeams', 'start', { matchId });
+  try {
+    if (!matchId) {
+      return { success: false, error: 'missing-match', message: 'Match id is required' };
+    }
+    const data = await getMatchTeamsService(db, matchId);
+    return { success: true, data };
+  } catch (err) {
+    log.error('getMatchTeams', 'failed', { err });
+    return { success: false, error: String(err), message: 'Could not load the match' };
+  }
+}
+
+export async function listRecentMatches(): Promise<ActionResponse<RecentMatch[]>> {
+  try {
+    const data = await listRecentMatchesService(db);
+    return { success: true, data };
+  } catch (err) {
+    log.error('listRecentMatches', 'failed', { err });
+    return { success: false, error: String(err), message: 'Could not load matches' };
   }
 }
