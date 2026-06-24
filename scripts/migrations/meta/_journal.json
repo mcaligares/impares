@@ -15,6 +15,13 @@
       "when": 1782090474842,
       "tag": "20260622010754_heavy_paper_doll",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782342509354,
+      "tag": "20260624230829_first_professor_monster",
+      "breakpoints": true
     }
   ]
 }
