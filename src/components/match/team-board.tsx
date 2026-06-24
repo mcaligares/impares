@@ -40,12 +40,12 @@ export function TeamBoard({ teams, onBuild, busy = false }: TeamBoardProps) {
           {busy ? 'Rearmando…' : 'Rearmar equipos'}
         </Button>
       </div>
-      <div className="grid items-start gap-4 md:grid-cols-[1fr_auto_1fr]">
-        <TeamColumn title="Equipo A" accent="cyan" players={teams.teamA} />
+      <div className="grid items-start gap-4 overflow-x-clip md:grid-cols-[1fr_auto_1fr]">
+        <TeamColumn title="Equipo A" accent="cyan" direction="left" players={teams.teamA} />
         <div className="flex items-center justify-center py-2 md:py-12">
           <span className="a-vs font-display text-3xl uppercase text-white md:text-5xl">VS</span>
         </div>
-        <TeamColumn title="Equipo B" accent="magenta" players={teams.teamB} />
+        <TeamColumn title="Equipo B" accent="magenta" direction="right" players={teams.teamB} />
       </div>
     </div>
   );
@@ -54,10 +54,12 @@ export function TeamBoard({ teams, onBuild, busy = false }: TeamBoardProps) {
 function TeamColumn({
   title,
   accent,
+  direction,
   players,
 }: {
   title: string;
   accent: 'cyan' | 'magenta';
+  direction: 'left' | 'right';
   players: TeamPlayer[];
 }) {
   const color = accent === 'cyan' ? 'text-cyan' : 'text-magenta';
@@ -66,8 +68,9 @@ function TeamColumn({
     accent === 'cyan'
       ? 'shadow-[0_0_70px_-34px_var(--color-cyan)]'
       : 'shadow-[0_0_70px_-34px_var(--color-magenta)]';
+  const enter = direction === 'left' ? 'a-slide-left' : 'a-slide-right';
   return (
-    <section className={`a-fade-up rounded-2xl border ${border} ${glow} bg-surface-2/30 p-4`}>
+    <section className={`${enter} rounded-2xl border ${border} ${glow} bg-surface-2/30 p-4`}>
       <h3 className={`mb-4 font-display text-2xl uppercase tracking-wider ${color}`}>{title}</h3>
       <div className="grid grid-cols-2 gap-3">
         {players.map((player, index) => (
