@@ -28,7 +28,7 @@ function parsedWith(...names: string[]): ParsedPlainTeam {
 describe('registerMatch', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('creates the match, upserts players, links the lineup as unassigned, and records the squad', async () => {
+  it('creates the match, upserts players, links the lineup split into balanced teams, and records the squad', async () => {
     const db = createMockDb();
     vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 'match-1' }));
     vi.mocked(squadRepo.insertSquad).mockResolvedValue(createSquad({ id: 'squad-1' }));
@@ -45,7 +45,8 @@ describe('registerMatch', () => {
 
     const lineupRows = vi.mocked(lineupRepo.insertMatchPlayers).mock.calls[0][1];
     expect(lineupRows).toHaveLength(2);
-    expect(lineupRows.every((row) => row.team === 'unassigned')).toBe(true);
+    expect(lineupRows.some((row) => row.team === 'unassigned')).toBe(false);
+    expect(lineupRows.map((row) => row.team).sort()).toEqual(['a', 'b']);
 
     expect(squadRepo.updateSquadStatus).toHaveBeenCalledWith(db, 'squad-1', {
       status: 'processed',
@@ -54,13 +55,24 @@ describe('registerMatch', () => {
     });
   });
 
+  it('aborts without creating anything when there are too few players to balance', async () => {
+    const db = createMockDb();
+
+    await expect(registerMatch(db, parsedWith('solo'))).rejects.toThrow(/at least/i);
+
+    expect(matchRepo.insertMatch).not.toHaveBeenCalled();
+    expect(squadRepo.insertSquad).not.toHaveBeenCalled();
+    expect(playerRepo.upsertPlayerBySlug).not.toHaveBeenCalled();
+    expect(lineupRepo.insertMatchPlayers).not.toHaveBeenCalled();
+  });
+
   it('marks the squad failed when persistence breaks mid-pipeline', async () => {
     const db = createMockDb();
     vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 'match-1' }));
     vi.mocked(squadRepo.insertSquad).mockResolvedValue(createSquad({ id: 'squad-1' }));
     vi.mocked(playerRepo.upsertPlayerBySlug).mockRejectedValue(new Error('db down'));
 
-    await expect(registerMatch(db, parsedWith('mati'))).rejects.toThrow('db down');
+    await expect(registerMatch(db, parsedWith('mati', 'Gonza'))).rejects.toThrow('db down');
 
     expect(squadRepo.updateSquadStatus).toHaveBeenCalledWith(
       db,

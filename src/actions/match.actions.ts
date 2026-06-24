@@ -2,6 +2,7 @@
 
 import { db } from '@/lib/db';
 import { logger } from '@/lib/logger';
+import { balanceConfig } from '@/config/balance.config';
 import { parsePlainTeam, type ParseWarning } from '@/services/parser.service';
 import {
   registerMatch,
@@ -28,6 +29,13 @@ export async function registerMatchFromText(raw: string): Promise<ActionResponse
     const parsed = parsePlainTeam(raw, new Date().getFullYear());
     if (parsed.players.length === 0) {
       return { success: false, error: 'empty', message: 'No players found in the pasted text' };
+    }
+    if (parsed.players.length < balanceConfig.minPlayers) {
+      return {
+        success: false,
+        error: 'too-few-players',
+        message: `Se necesitan al menos ${balanceConfig.minPlayers} jugadores para armar los equipos`,
+      };
     }
     const result = await registerMatch(db, parsed);
     log('registerMatchFromText', 'success', { matchId: result.matchId });
