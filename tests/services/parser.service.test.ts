@@ -37,21 +37,25 @@ describe('parsePlainTeam', () => {
     expect(result.warnings.some((w) => w.reason === 'unrecognized line')).toBe(true);
   });
 
-  it('maps pluma and tanque weight tokens', () => {
-    const result = parsePlainTeam('11-migue,pluma\n8-Don Carlos,tanque', YEAR);
-    expect(result.players[0].weight).toBe('pluma');
-    expect(result.players[1].weight).toBe('tanque');
+  it('parses mobility and endurance numbers in fixed order', () => {
+    const result = parsePlainTeam('11-migue,3,4\n8-Don Carlos,5', YEAR);
+    expect(result.players[0].mobility).toBe(3);
+    expect(result.players[0].endurance).toBe(4);
+    expect(result.players[1].mobility).toBe(5);
+    expect(result.players[1].endurance).toBeUndefined();
   });
 
-  it('leaves weight undefined when no token is present', () => {
+  it('leaves attributes undefined when no tokens are present', () => {
     const result = parsePlainTeam('2-Gonza', YEAR);
-    expect(result.players[0].weight).toBeUndefined();
+    expect(result.players[0].mobility).toBeUndefined();
+    expect(result.players[0].endurance).toBeUndefined();
   });
 
-  it('ignores unknown tokens and records a warning', () => {
-    const result = parsePlainTeam('3-JP,zzz', YEAR);
-    expect(result.players[0].weight).toBeUndefined();
-    expect(result.warnings.some((w) => w.reason.includes('zzz'))).toBe(true);
+  it('ignores out-of-range or non-numeric ratings and records a warning', () => {
+    const result = parsePlainTeam('3-JP,9\n4-Ana,foo', YEAR);
+    expect(result.players[0].mobility).toBeUndefined();
+    expect(result.players[1].mobility).toBeUndefined();
+    expect(result.warnings.some((w) => w.reason.includes('invalid mobility'))).toBe(true);
   });
 
   it('disambiguates duplicate names with incremental suffixes', () => {
