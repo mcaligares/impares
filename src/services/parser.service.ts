@@ -1,12 +1,12 @@
 import { parserConfig } from '@/config/parser.config';
 import { slugify, disambiguateSlugs } from '@/utils/slug';
-import type { PlayerWeight } from '@/entities/player/player.schema';
 
 export type ParsedPlayer = {
   order: number;
   name: string;
   slug: string;
-  weight?: PlayerWeight;
+  mobility?: number;
+  endurance?: number;
 };
 
 export type ParsedMatch = {
@@ -29,11 +29,17 @@ export type ParsedPlainTeam = {
 const PLAYER_LINE = /^(\d+)\s*-\s*(.+)$/;
 const DATE_TIME = /(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?(?:\s+(\d{1,2}):(\d{2}))?/;
 
-const WEIGHT_TOKENS: readonly string[] = parserConfig.weightTokens;
-
 function normalizeYear(raw: string): number {
   const value = Number(raw);
   return value < 100 ? 2000 + value : value;
+}
+
+function parseRating(raw: string): number | null {
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value < parserConfig.minRating || value > parserConfig.maxRating) {
+    return null;
+  }
+  return value;
 }
 
 function parseHeader(line: string, match: RegExpMatchArray, defaultYear: number): ParsedMatch {
@@ -52,7 +58,7 @@ function parseHeader(line: string, match: RegExpMatchArray, defaultYear: number)
   return { title, location: title, date };
 }
 
-type RawEntry = { order: number; name: string; weight?: PlayerWeight };
+type RawEntry = { order: number; name: string; mobility?: number; endurance?: number };
 
 export function parsePlainTeam(raw: string, defaultYear: number): ParsedPlainTeam {
   const warnings: ParseWarning[] = [];
@@ -73,18 +79,24 @@ export function parsePlainTeam(raw: string, defaultYear: number): ParsedPlainTea
         continue;
       }
 
-      let weight: PlayerWeight | undefined;
-      for (const part of tokenParts) {
-        const token = part.trim().toLowerCase();
-        if (!token) continue;
-        if (WEIGHT_TOKENS.includes(token)) {
-          weight = token as PlayerWeight;
-        } else {
-          warnings.push({ line, reason: `unrecognized token: ${token}` });
+      const entry: RawEntry = { order, name };
+      tokenParts.forEach((part, index) => {
+        const token = part.trim();
+        if (!token) return;
+        const attribute = parserConfig.attributeOrder[index];
+        if (!attribute) {
+          warnings.push({ line, reason: `unexpected extra attribute: ${token}` });
+          return;
         }
-      }
+        const rating = parseRating(token);
+        if (rating === null) {
+          warnings.push({ line, reason: `invalid ${attribute}: ${token}` });
+          return;
+        }
+        entry[attribute] = rating;
+      });
 
-      entries.push({ order, name, weight });
+      entries.push(entry);
       continue;
     }
 
@@ -102,7 +114,8 @@ export function parsePlainTeam(raw: string, defaultYear: number): ParsedPlainTea
     order: entry.order,
     name: entry.name,
     slug: slugs[index],
-    weight: entry.weight,
+    mobility: entry.mobility,
+    endurance: entry.endurance,
   }));
 
   return { match, players, warnings };

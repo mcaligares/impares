@@ -1,18 +1,9 @@
 import { pgTable, uuid, text, boolean, jsonb } from 'drizzle-orm/pg-core';
 import { timestamps } from '@/lib/db/timestamps';
 
-export type PlayerPosition = 'gk' | 'def' | 'mid' | 'fwd';
-
-export type PlayerWeight = 'pluma' | 'tanque';
-
 export type PlayerAttributes = {
-  attack?: number;
-  defense?: number;
-  stamina?: number;
-  speed?: number;
-  goalkeeping?: number;
-  position?: PlayerPosition;
-  weight?: PlayerWeight;
+  mobility?: number;
+  endurance?: number;
 };
 
 export const player = pgTable('player', {

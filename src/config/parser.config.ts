@@ -1,7 +1,7 @@
-import type { PlayerWeight } from '@/entities/player/player.schema';
-
 export const parserConfig = {
-  weightTokens: ['pluma', 'tanque'] as const satisfies readonly PlayerWeight[],
+  attributeOrder: ['mobility', 'endurance'] as const,
+  minRating: 1,
+  maxRating: 5,
 } as const;
 
-export type WeightToken = (typeof parserConfig.weightTokens)[number];
+export type AttributeName = (typeof parserConfig.attributeOrder)[number];

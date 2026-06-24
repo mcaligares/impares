@@ -1,5 +1,5 @@
 import { logger } from '@/lib/logger';
-import { weightToAttributes, toLineupRows } from './transformers';
+import { toPlayerAttributes, toLineupRows } from './transformers';
 import { insertMatch } from '@/repositories/match.repository';
 import { insertSquad, updateSquadStatus } from '@/repositories/squad.repository';
 import { upsertPlayerBySlug } from '@/repositories/player.repository';
@@ -39,7 +39,7 @@ export async function registerMatch(
     const lineup: { playerId: string; attributes?: PlayerAttributes }[] = [];
 
     for (const parsedPlayer of parsed.players) {
-      const attributes = weightToAttributes(parsedPlayer.weight);
+      const attributes = toPlayerAttributes(parsedPlayer);
       const { player, inserted } = await upsertPlayerBySlug(db, {
         name: parsedPlayer.name,
         slug: parsedPlayer.slug,

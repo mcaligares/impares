@@ -1,6 +1,8 @@
 import type { Player } from '@/entities/player/player.entity';
 import type { Match } from '@/entities/match/match.entity';
 import type { Squad } from '@/entities/squad/squad.entity';
+import type { MatchPlayer } from '@/entities/match-player/match-player.entity';
+import type { PlayerAttributes } from '@/entities/player/player.schema';
 
 export function createPlayerWithSlug(
   slug: string,
@@ -47,6 +49,25 @@ export function createSquad(overrides: Partial<Squad> = {}): Squad {
     created_count: 0,
     updated_count: 0,
     error: null,
+    created_at: now,
+    updated_at: now,
+    ...overrides,
+  };
+}
+
+export function createMatchPlayerRow(
+  id: string,
+  rating_snapshot: PlayerAttributes | null = null,
+  overrides: Partial<MatchPlayer> = {},
+): MatchPlayer {
+  const now = new Date();
+  return {
+    id,
+    match_id: 'match-1',
+    player_id: `player-${id}`,
+    team: 'unassigned',
+    batch_id: 'squad-1',
+    rating_snapshot,
     created_at: now,
     updated_at: now,
     ...overrides,
