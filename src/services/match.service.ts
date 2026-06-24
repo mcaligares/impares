@@ -1,12 +1,35 @@
 import { logger } from '@/lib/logger';
-import { toPlayerAttributes, toLineupRows } from './transformers';
-import { insertMatch } from '@/repositories/match.repository';
+import { appConfig } from '@/config/app.config';
+import { toPlayerAttributes, toLineupRows, toMatchTeams, toRecentMatches } from './transformers';
+import { insertMatch, findMatchById, findRecentMatches } from '@/repositories/match.repository';
 import { insertSquad, updateSquadStatus } from '@/repositories/squad.repository';
 import { upsertPlayerBySlug } from '@/repositories/player.repository';
-import { insertMatchPlayers } from '@/repositories/match-player.repository';
+import { insertMatchPlayers, findLineupWithPlayers } from '@/repositories/match-player.repository';
 import type { DbClient } from '@/repositories/types';
 import type { PlayerAttributes } from '@/entities/player/player.schema';
+import type { Match } from '@/entities/match/match.entity';
 import type { ParsedPlainTeam } from '@/services/parser.service';
+
+export type TeamPlayer = {
+  playerId: string;
+  name: string;
+  mobility?: number;
+  endurance?: number;
+};
+
+export type MatchTeams = {
+  match: Match;
+  teamA: TeamPlayer[];
+  teamB: TeamPlayer[];
+  unassigned: TeamPlayer[];
+};
+
+export type RecentMatch = {
+  id: string;
+  date: Date;
+  location: string | null;
+  status: Match['status'];
+};
 
 const log = logger.service('match');
 
@@ -64,4 +87,22 @@ export async function registerMatch(
     await updateSquadStatus(db, batch.id, { status: 'failed', error: String(err) });
     throw err;
   }
+}
+
+export async function getMatchTeams(db: DbClient, matchId: string): Promise<MatchTeams> {
+  log('getMatchTeams', 'start', { matchId });
+  const match = await findMatchById(db, matchId);
+  if (!match) {
+    throw new Error('Match not found');
+  }
+  const lineup = await findLineupWithPlayers(db, matchId);
+  log('getMatchTeams', 'done', { matchId, players: lineup.length });
+  return toMatchTeams(match, lineup);
+}
+
+export async function listRecentMatches(db: DbClient): Promise<RecentMatch[]> {
+  log('listRecentMatches', 'start', {});
+  const matches = await findRecentMatches(db, appConfig.pagination.defaultPageSize);
+  log('listRecentMatches', 'done', { count: matches.length });
+  return toRecentMatches(matches);
 }

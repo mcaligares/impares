@@ -1,1 +1,69 @@
 @import 'tailwindcss';
+
+@theme {
+  --color-bg: #06070b;
+  --color-surface: #11131c;
+  --color-surface-2: #181b27;
+  --color-line: #262a3a;
+  --color-cyan: #2dd4ff;
+  --color-magenta: #ff3d9a;
+  --color-gold: #f6b40e;
+  --color-celeste: #75aadb;
+  --color-muted: #7f879c;
+  --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Anton', 'Hanken Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+html,
+body {
+  background-color: var(--color-bg);
+  color: #eef1f8;
+}
+
+body {
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(75% 55% at 50% -8%, rgba(45, 212, 255, 0.12), transparent 60%),
+    radial-gradient(55% 45% at 100% 0%, rgba(255, 61, 154, 0.07), transparent 60%),
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: auto, auto, 46px 46px, 46px 46px;
+  background-position: center top;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.9) translateY(12px); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes shine {
+  0% { transform: translateX(-130%) skewX(-20deg); }
+  100% { transform: translateX(260%) skewX(-20deg); }
+}
+@keyframes vs-pulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px var(--color-cyan)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 16px var(--color-magenta)); }
+}
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.a-fade-up { animation: fade-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.a-pop { animation: pop-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.a-fade { animation: fade-in 0.7s ease both; }
+.a-vs { animation: vs-pulse 2.4s ease-in-out infinite; }
+.a-float { animation: float-y 4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .a-fade-up, .a-pop, .a-fade, .a-vs, .a-float { animation: none !important; }
+}
