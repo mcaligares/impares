@@ -3,15 +3,25 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { registerMatchFromText } from '@/actions/match.actions';
+import { identifyVoter } from '@/actions/voter.actions';
 import { RegisterForm } from '@/components/match/register-form';
 import { MatchList } from '@/components/match/match-list';
+import { IdentityBar } from '@/components/identity/identity-bar';
 import { Confetti } from '@/components/ui/confetti';
 import type { RecentMatch } from '@/services/match.service';
+import type { Voter } from '@/entities/voter/voter.entity';
 
-export function HomeClient({ initialMatches }: { initialMatches: RecentMatch[] }) {
+export function HomeClient({
+  initialMatches,
+  voter,
+}: {
+  initialMatches: RecentMatch[];
+  voter: Voter | null;
+}) {
   const router = useRouter();
   const [error, setError] = useState<string | undefined>();
   const [pending, startTransition] = useTransition();
+  const [identifying, startIdentify] = useTransition();
 
   const handleSubmit = (raw: string) => {
     setError(undefined);
@@ -25,9 +35,20 @@ export function HomeClient({ initialMatches }: { initialMatches: RecentMatch[] }
     });
   };
 
+  const handleIdentify = (name: string) => {
+    startIdentify(async () => {
+      await identifyVoter(name);
+      router.refresh();
+    });
+  };
+
   return (
-    <main className="relative mx-auto max-w-5xl px-6 pb-24 pt-16">
+    <main className="relative mx-auto max-w-5xl px-6 pb-24 pt-8">
       <Confetti />
+
+      <div className="a-fade-up mb-10 flex justify-end">
+        <IdentityBar voter={voter} onIdentify={handleIdentify} busy={identifying} />
+      </div>
 
       <header className="a-fade-up mb-12 text-center">
         <p className="mb-4 inline-block rounded-full border border-line bg-surface/60 px-3 py-1 text-xs uppercase tracking-[0.22em] text-cyan">

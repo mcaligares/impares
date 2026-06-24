@@ -15,6 +15,13 @@
       "when": 1782090474842,
       "tag": "20260622010754_heavy_paper_doll",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782341734553,
+      "tag": "20260624225534_tidy_namorita",
+      "breakpoints": true
     }
   ]
 }

@@ -5,6 +5,9 @@ export const appConfig = {
     defaultPageSize: 20,
     maxPageSize: 100,
   },
+  voter: {
+    nameMaxLength: 40,
+  },
   upload: {
     maxSizeBytes: 5 * 1024 * 1024,
     allowedMimeTypes: [

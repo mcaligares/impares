@@ -1,4 +1,7 @@
-import 'dotenv/config';
+import { config } from 'dotenv';
+
+config({ path: '.env.local' });
+config();
 
 if (!process.env.DATABASE_URL || !process.env.BETTER_AUTH_SECRET) {
   console.log('Seed skipped: requires DATABASE_URL and BETTER_AUTH_SECRET');
