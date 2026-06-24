@@ -25,29 +25,29 @@ The system SHALL accept a raw multi-line text paste from a WhatsApp group and pa
 - **WHEN** the paste contains empty lines or lines that do not match the header or numbered-player patterns
 - **THEN** those lines are skipped and recorded as parse warnings rather than causing a failure
 
-### Requirement: Parse optional weight token
+### Requirement: Parse optional attribute tokens
 
-The system SHALL parse an optional weight token that follows a player name after a comma (e.g. `11-migue,pluma`) and set the player's `attributes.weight`. The recognized vocabulary is Spanish: `pluma` (light/fast) and `tanque` (heavy). When no weight token is present, `weight` SHALL remain undefined, representing the default `normal` level. The ordered scale is `pluma` (fast) → normal → `tanque` (heavy). Unknown tokens SHALL be ignored and recorded as a parse warning; they SHALL NOT fail the run.
+The system SHALL parse optional attribute tokens that follow a player name after a comma — `name,mobility,endurance` — and set the player's `attributes.mobility` and `attributes.endurance`. Each is an integer from 1 to 5 in fixed order: mobility first, endurance second. A missing trailing value SHALL be left undefined (the scorer applies the baseline). A non-numeric or out-of-range value SHALL be ignored and recorded as a parse warning; it SHALL NOT fail the run.
 
-#### Scenario: Light player
+#### Scenario: Both attributes
 
-- **WHEN** a line is `11-migue,pluma`
-- **THEN** the parsed player `migue` has `attributes.weight` = `pluma`
+- **WHEN** a line is `11-migue,3,4`
+- **THEN** the parsed player `migue` has `attributes.mobility` = 3 and `attributes.endurance` = 4
 
-#### Scenario: Heavy player
+#### Scenario: Only mobility
 
-- **WHEN** a line is `8-Don Carlos,tanque`
-- **THEN** the parsed player `Don Carlos` has `attributes.weight` = `tanque`
+- **WHEN** a line is `8-Don Carlos,5`
+- **THEN** the parsed player has `attributes.mobility` = 5 and `attributes.endurance` undefined
 
-#### Scenario: Default normal when no token
+#### Scenario: No attributes
 
 - **WHEN** a line has no comma (e.g. `2-Gonza`)
-- **THEN** the player is registered with no `weight` set, representing the normal default
+- **THEN** the player is registered with no mobility or endurance set
 
-#### Scenario: Ignore an unknown token
+#### Scenario: Invalid value
 
-- **WHEN** a line is `3-JP,zzz`
-- **THEN** the player `JP` is registered with no weight, and a warning notes the unrecognized token
+- **WHEN** a line is `3-JP,9` or `3-JP,foo`
+- **THEN** the out-of-range or non-numeric value is ignored, a warning is recorded, and the player has no value for that attribute
 
 ### Requirement: Generate a stable slug per player
 
@@ -75,7 +75,7 @@ The system SHALL derive a URL-safe `slug` from each player's name to serve as th
 
 ### Requirement: Upsert players by slug
 
-The system SHALL upsert each parsed player into the player table keyed by `slug`. A player whose slug does not exist SHALL be created; a player whose slug already exists SHALL be updated. When a weight token is present, the existing player's `attributes.weight` SHALL be updated; when absent, the existing player's stored attributes SHALL be preserved.
+The system SHALL upsert each parsed player into the player table keyed by `slug`. A player whose slug does not exist SHALL be created; a player whose slug already exists SHALL be updated. When attribute tokens are present, the player's `attributes` (`mobility` / `endurance`) SHALL be updated; when absent, the existing player's stored attributes SHALL be preserved.
 
 #### Scenario: Create new players
 
@@ -84,8 +84,8 @@ The system SHALL upsert each parsed player into the player table keyed by `slug`
 
 #### Scenario: Update an existing player
 
-- **WHEN** a parsed slug already exists and the line carries a weight token
-- **THEN** the existing player row is updated with the new weight and reported as updated
+- **WHEN** a parsed slug already exists and the line carries attribute tokens
+- **THEN** the existing player row is updated with the new attributes and reported as updated
 
 #### Scenario: Preserve attributes when none provided
 
