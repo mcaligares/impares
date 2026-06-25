@@ -28,7 +28,7 @@ export function HomeClient({
     startTransition(async () => {
       const res = await registerMatchFromText(raw);
       if (res.success && res.data) {
-        router.push(`/matches/${res.data.matchId}`);
+        router.push(`/partido/${res.data.matchId}`);
       } else {
         setError(res.message ?? 'No se pudo crear el partido');
       }

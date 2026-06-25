@@ -49,7 +49,7 @@ export function balanceTeams(players: ScoredPlayer[]): BalancedTeams {
   };
 }
 
-export async function balanceMatchTeams(db: DbClient, matchId: string): Promise<BalancedTeams> {
+export async function balanceMatchTeams(db: DbClient, matchId: number): Promise<BalancedTeams> {
   log('balanceMatchTeams', 'start', { matchId });
 
   const rows = await findMatchPlayersByMatch(db, matchId);

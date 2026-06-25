@@ -28,7 +28,7 @@ export type MatchTeams = {
 };
 
 export type RecentMatch = {
-  id: string;
+  id: number;
   date: Date;
   location: string | null;
   status: Match['status'];
@@ -37,7 +37,7 @@ export type RecentMatch = {
 const log = logger.service('match');
 
 export type RegisterMatchResult = {
-  matchId: string;
+  matchId: number;
   createdCount: number;
   updatedCount: number;
 };
@@ -99,7 +99,7 @@ export async function registerMatch(
   }
 }
 
-export async function getMatchTeams(db: DbClient, matchId: string): Promise<MatchTeams> {
+export async function getMatchTeams(db: DbClient, matchId: number): Promise<MatchTeams> {
   log('getMatchTeams', 'start', { matchId });
   const match = await findMatchById(db, matchId);
   if (!match) {

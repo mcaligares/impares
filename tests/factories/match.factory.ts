@@ -25,7 +25,7 @@ export function createPlayerWithSlug(
 export function createMatch(overrides: Partial<Match> = {}): Match {
   const now = new Date();
   return {
-    id: 'match-1',
+    id: 1,
     match_date: now,
     location: 'Futbol Lujan',
     status: 'scheduled',
@@ -42,7 +42,7 @@ export function createSquad(overrides: Partial<Squad> = {}): Squad {
   const now = new Date();
   return {
     id: 'squad-1',
-    match_id: 'match-1',
+    match_id: 1,
     source: null,
     status: 'pending',
     row_count: 0,
@@ -63,7 +63,7 @@ export function createMatchPlayerRow(
   const now = new Date();
   return {
     id,
-    match_id: 'match-1',
+    match_id: 1,
     player_id: `player-${id}`,
     team: 'unassigned',
     batch_id: 'squad-1',

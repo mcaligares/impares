@@ -45,7 +45,7 @@ export function resolvePlayerAttributes(
 }
 
 export function toLineupRows(
-  matchId: string,
+  matchId: number,
   batchId: string,
   items: { playerId: string; attributes?: PlayerAttributes }[],
   balanced: BalancedTeams,

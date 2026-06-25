@@ -1,10 +1,4 @@
-# match-ui Specification
-
-## Purpose
-
-The match-ui capability provides the user-facing pages for registering matches and viewing their balanced teams. It covers the landing page for pasting a player list and registering a match, the recent-matches list, and the match page that builds and displays the two teams as player cards with characteristic badges. Scores and team totals remain internal to balancing and are never shown to the user. Pages follow the orchestrator pattern, separating server data fetching from client interaction.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Landing page registers a match from a pasted list
 
@@ -39,34 +33,6 @@ Both the landing page and the match page SHALL show a list of the most recent ma
 - **WHEN** there are no matches
 - **THEN** the list renders an empty state rather than an error
 
-### Requirement: Read a match's teams for display
-
-The system SHALL provide a read action `getMatchTeams(matchId)` that returns the match together with its players grouped into team A and team B (and any still unassigned), each player carrying a display name and its characteristic levels (`mobility` / `endurance`) for badge display. The action SHALL NOT include or expose any computed score or team total. It SHALL be usable to both render and refresh the match page.
-
-#### Scenario: Teams already built
-
-- **WHEN** a match has players assigned to A and B
-- **THEN** the action returns both teams with player names and characteristic levels (for badges) — never scores or totals — and an empty unassigned list
-
-#### Scenario: Teams not built yet
-
-- **WHEN** a match has players but none are assigned
-- **THEN** the action returns empty A/B teams and the players in the unassigned list
-
-#### Scenario: Unknown match
-
-- **WHEN** the `matchId` does not exist
-- **THEN** the action returns a failure response with a user-facing message
-
-### Requirement: Scores are never shown to the user
-
-Computed scores and team totals SHALL remain internal to balancing and SHALL NEVER be returned to the client or shown in the UI. Player ability SHALL be presented only as **characteristic badges** (one per attribute), never as numbers.
-
-#### Scenario: No numbers in the UI
-
-- **WHEN** any page renders a player or a team
-- **THEN** it shows characteristic badges and names, and no score, rating number, or team total appears anywhere
-
 ### Requirement: Match page builds and shows the two teams
 
 The match page (`/partido/[id]`) SHALL show the match's teams using `getMatchTeams`. The `[id]` segment is the match's incremental integer id; a non-numeric id SHALL resolve to a not-found response. A match reached from a successful registration SHALL open directly in the built state, showing team A and team B side by side with each player's name and characteristic badges (no totals, no balance indicator). When a match's roster is still unassigned (a fallback state, not produced by normal registration), the page SHALL show the roster with a "Build teams" control. A "Re-draw" control SHALL re-run the balance and refresh the view.
@@ -90,12 +56,3 @@ The match page (`/partido/[id]`) SHALL show the match's teams using `getMatchTea
 
 - **WHEN** a request reaches `/partido/{id}` with a non-numeric id
 - **THEN** the page resolves to a not-found response rather than querying for a match
-
-### Requirement: Pages follow the orchestrator pattern
-
-Each page SHALL use a server `page.tsx` that fetches initial data and a client `page.client.tsx` that orchestrates interactions. Feature components SHALL receive data and action callbacks as props and SHALL NOT import server actions directly.
-
-#### Scenario: Server fetch, client interaction
-
-- **WHEN** a page renders
-- **THEN** `page.tsx` (server) provides the initial data and `page.client.tsx` (client) handles the form, buttons, and action calls

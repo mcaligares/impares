@@ -6,7 +6,7 @@ export const squadStatus = pgEnum('squad_status', ['pending', 'processed', 'fail
 
 export const squad = pgTable('squad', {
   id: uuid('id').primaryKey().defaultRandom(),
-  match_id: uuid('match_id').references(() => match.id, { onDelete: 'set null' }),
+  match_id: integer('match_id').references(() => match.id, { onDelete: 'set null' }),
   source: text('source'),
   status: squadStatus('status').notNull().default('pending'),
   row_count: integer('row_count').notNull().default(0),

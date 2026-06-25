@@ -7,7 +7,7 @@ import type { DbClient } from './types';
 const log = logger.repo('squad');
 
 export type InsertSquad = {
-  match_id?: string | null;
+  match_id?: number | null;
   source?: string | null;
   status?: Squad['status'];
   row_count?: number;

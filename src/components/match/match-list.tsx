@@ -10,7 +10,7 @@ export function MatchList({ matches }: { matches: RecentMatch[] }) {
       {matches.map((match, index) => (
         <Link
           key={match.id}
-          href={`/matches/${match.id}`}
+          href={`/partido/${match.id}`}
           style={{ animationDelay: `${index * 50}ms` }}
           className="a-fade-up group flex items-center justify-between rounded-xl border border-line bg-surface/70 px-4 py-3.5 transition duration-200 hover:-translate-y-0.5 hover:border-cyan/60 hover:bg-surface"
         >

@@ -46,7 +46,7 @@ export async function registerMatchFromText(raw: string): Promise<ActionResponse
   }
 }
 
-export async function getMatchTeams(matchId: string): Promise<ActionResponse<MatchTeams>> {
+export async function getMatchTeams(matchId: number): Promise<ActionResponse<MatchTeams>> {
   log('getMatchTeams', 'start', { matchId });
   try {
     if (!matchId) {

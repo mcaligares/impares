@@ -1,4 +1,4 @@
-import { pgTable, uuid, jsonb, pgEnum, unique } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, integer, jsonb, pgEnum, unique } from 'drizzle-orm/pg-core';
 import { timestamps } from '@/lib/db/timestamps';
 import { match } from '@/entities/match/match.schema';
 import { player, type PlayerAttributes } from '@/entities/player/player.schema';
@@ -10,7 +10,7 @@ export const matchPlayer = pgTable(
   'match_player',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    match_id: uuid('match_id')
+    match_id: integer('match_id')
       .notNull()
       .references(() => match.id, { onDelete: 'cascade' }),
     player_id: uuid('player_id')

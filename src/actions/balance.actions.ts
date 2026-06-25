@@ -7,7 +7,7 @@ import type { ActionResponse } from '@/actions/types';
 
 const log = logger.action('balance');
 
-export async function balanceTeams(matchId: string): Promise<ActionResponse<BalancedTeams>> {
+export async function balanceTeams(matchId: number): Promise<ActionResponse<BalancedTeams>> {
   log('balanceTeams', 'start', { matchId });
   try {
     if (!matchId) {
