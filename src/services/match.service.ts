@@ -3,10 +3,10 @@ import { appConfig } from '@/config/app.config';
 import { balanceConfig } from '@/config/balance.config';
 import { scorePlayer } from '@/services/scoring.service';
 import { balanceTeams } from '@/services/balance.service';
-import { toPlayerAttributes, toLineupRows, toScoredLineup, toMatchTeams, toRecentMatches } from './transformers';
+import { resolvePlayerAttributes, toLineupRows, toScoredLineup, toMatchTeams, toRecentMatches } from './transformers';
 import { insertMatch, findMatchById, findRecentMatches } from '@/repositories/match.repository';
 import { insertSquad, updateSquadStatus } from '@/repositories/squad.repository';
-import { upsertPlayerBySlug } from '@/repositories/player.repository';
+import { findPlayerBySlug, upsertPlayerBySlug } from '@/repositories/player.repository';
 import { insertMatchPlayers, findLineupWithPlayers } from '@/repositories/match-player.repository';
 import type { DbClient } from '@/repositories/types';
 import type { PlayerAttributes } from '@/entities/player/player.schema';
@@ -69,7 +69,8 @@ export async function registerMatch(
     const lineup: { playerId: string; attributes?: PlayerAttributes }[] = [];
 
     for (const parsedPlayer of parsed.players) {
-      const attributes = toPlayerAttributes(parsedPlayer);
+      const existing = await findPlayerBySlug(db, parsedPlayer.slug);
+      const attributes = resolvePlayerAttributes(parsedPlayer, existing?.attributes ?? null);
       const { player, inserted } = await upsertPlayerBySlug(db, {
         name: parsedPlayer.name,
         slug: parsedPlayer.slug,
