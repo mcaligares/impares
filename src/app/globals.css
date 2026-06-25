@@ -9,6 +9,8 @@
   --color-magenta: #ff3d9a;
   --color-gold: #f6b40e;
   --color-celeste: #75aadb;
+  --color-team-a: #fb923c;
+  --color-team-b: #a78bfa;
   --color-muted: #7f879c;
   --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Anton', 'Hanken Grotesk', sans-serif;
@@ -72,8 +74,8 @@ body {
 .a-vs { animation: vs-pulse 2.4s ease-in-out infinite; }
 .a-float { animation: float-y 4s ease-in-out infinite; }
 .a-shine { animation: shine 0.9s ease; }
-.a-slide-left { animation: slide-in-left 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
-.a-slide-right { animation: slide-in-right 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.a-slide-left { animation: slide-in-left 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.a-slide-right { animation: slide-in-right 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 
 @media (prefers-reduced-motion: reduce) {
   .a-fade-up, .a-pop, .a-fade, .a-vs, .a-float,

@@ -31,6 +31,8 @@ export function createMatch(overrides: Partial<Match> = {}): Match {
     status: 'scheduled',
     team_a_score: null,
     team_b_score: null,
+    team_a_color: null,
+    team_b_color: null,
     notes: null,
     created_at: now,
     updated_at: now,

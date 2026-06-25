@@ -39,14 +39,19 @@ When the user submits the create-match form ("Crear partido") and the match is c
 - **WHEN** the confetti feature flag is off
 - **THEN** creating a match navigates normally with no confetti
 
-### Requirement: Teams enter the match page from opposite sides
+### Requirement: Teams enter the match page as a staged face-off
 
-When the match page shows built teams, Equipo A SHALL animate in horizontally from the left (moving left → right) and Equipo B SHALL animate in horizontally from the right (moving right → left). Each entrance SHALL use an overshoot/bounce easing so the column slightly passes its final position and settles back, for added impact. The two columns SHALL come to rest in their normal side-by-side layout.
+When the match page shows built teams, the entrance SHALL be staged in two beats. First, a **face-off**: "Equipo A" SHALL animate in horizontally from the left (left → right) and "Equipo B" from the right (right → left), each with an overshoot/bounce easing so it slightly passes its final position and settles, with a "vs" appearing between them. This face-off SHALL read as a distinct beat of roughly one second. Then the **players reveal**: a brief "Estos son los jugadores" cue, followed by the two teams' player cards appearing in a staggered cascade. Everything SHALL come to rest in the normal side-by-side layout.
 
-#### Scenario: Built teams reveal from opposite sides
+#### Scenario: Built teams reveal as a face-off, then players
 
-- **WHEN** the match page renders with teams already built, or the organizer clicks "Armar equipos"/"Re-draw" and teams appear
-- **THEN** Equipo A slides in from the left and Equipo B slides in from the right, each overshooting slightly and settling into place
+- **WHEN** the match page renders with teams already built, or the organizer clicks "Armar equipos"/"Rearmar equipos" and teams appear
+- **THEN** "Equipo A" slides in from the left and "Equipo B" from the right (each overshooting and settling), and only after that face-off do the "Estos son los jugadores" cue and the player cards reveal in a stagger
+
+#### Scenario: The face-off precedes the players
+
+- **WHEN** the teams animate in
+- **THEN** the team names and "vs" appear first, and the player cards stay hidden until the face-off beat completes
 
 ### Requirement: All motion respects reduced-motion preference
 

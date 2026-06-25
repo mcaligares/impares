@@ -1,6 +1,8 @@
 import { logger } from '@/lib/logger';
 import { appConfig } from '@/config/app.config';
 import { balanceConfig } from '@/config/balance.config';
+import { colorConfig } from '@/config/color.config';
+import { pickTwoColors } from '@/utils/team-colors';
 import { scorePlayer } from '@/services/scoring.service';
 import { balanceTeams } from '@/services/balance.service';
 import { resolvePlayerAttributes, toLineupRows, toScoredLineup, toMatchTeams, toRecentMatches } from './transformers';
@@ -52,9 +54,12 @@ export async function registerMatch(
     throw new Error(`At least ${balanceConfig.minPlayers} players are required to balance teams`);
   }
 
+  const [teamAColor, teamBColor] = pickTwoColors(colorConfig.teamPalette, Math.random);
   const match = await insertMatch(db, {
     match_date: parsed.match?.date ?? new Date(),
     location: parsed.match?.location ?? null,
+    team_a_color: teamAColor,
+    team_b_color: teamBColor,
   });
 
   const batch = await insertSquad(db, {

@@ -70,6 +70,25 @@ describe('registerMatch', () => {
     expect(firstUpsert.attributes).toEqual({ mobility: 3, endurance: 3 });
   });
 
+  it('assigns the match two distinct team colors', async () => {
+    const db = createMockDb();
+    vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 'match-1' }));
+    vi.mocked(squadRepo.insertSquad).mockResolvedValue(createSquad({ id: 'squad-1' }));
+    vi.mocked(lineupRepo.insertMatchPlayers).mockResolvedValue([]);
+    vi.mocked(playerRepo.findPlayerBySlug).mockResolvedValue(null);
+    vi.mocked(playerRepo.upsertPlayerBySlug).mockResolvedValue({
+      player: createPlayerWithSlug('x', 'x'),
+      inserted: true,
+    });
+
+    await registerMatch(db, parsedWith('mati', 'Gonza'));
+
+    const insertArg = vi.mocked(matchRepo.insertMatch).mock.calls[0][1];
+    expect(insertArg.team_a_color).toBeTruthy();
+    expect(insertArg.team_b_color).toBeTruthy();
+    expect(insertArg.team_a_color).not.toBe(insertArg.team_b_color);
+  });
+
   it('preserves the stored value when the list omits a characteristic, 3 only if never had one', async () => {
     const db = createMockDb();
     vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 1 }));
