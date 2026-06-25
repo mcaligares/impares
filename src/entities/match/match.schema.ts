@@ -15,6 +15,8 @@ export const match = pgTable('match', {
   status: matchStatus('status').notNull().default('scheduled'),
   team_a_score: smallint('team_a_score'),
   team_b_score: smallint('team_b_score'),
+  team_a_color: text('team_a_color'),
+  team_b_color: text('team_b_color'),
   notes: text('notes'),
   ...timestamps,
 });

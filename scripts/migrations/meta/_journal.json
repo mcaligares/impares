@@ -29,6 +29,13 @@
       "when": 1782356063595,
       "tag": "20260625025423_clumsy_tombstone",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1782359078241,
+      "tag": "20260625034438_yellow_nomad",
+      "breakpoints": true
     }
   ]
 }

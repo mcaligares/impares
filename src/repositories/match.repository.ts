@@ -10,6 +10,8 @@ export type InsertMatch = {
   match_date: Date;
   location?: string | null;
   notes?: string | null;
+  team_a_color?: string | null;
+  team_b_color?: string | null;
 };
 
 export async function insertMatch(db: DbClient, input: InsertMatch): Promise<Match> {
