@@ -20,7 +20,7 @@ export function MatchClient({ teams, recent }: { teams: MatchTeams; recent: Rece
   };
 
   return (
-    <main className="mx-auto max-w-5xl px-6 pb-24 pt-12">
+    <main className="mx-auto max-w-5xl px-4 pb-24 pt-12 sm:px-6">
       <header className="a-fade-up mb-8">
         <Link
           href="/"
@@ -38,8 +38,8 @@ export function MatchClient({ teams, recent }: { teams: MatchTeams; recent: Rece
         <TeamBoard teams={teams} onBuild={handleBuild} busy={pending} />
       </section>
 
-      <section className="a-fade-up mt-16" style={{ animationDelay: '200ms' }}>
-        <h2 className="mb-5 font-display text-2xl uppercase tracking-wide text-white">Últimos partidos</h2>
+      <section className="a-fade-up mt-14 pt-6 sm:mt-24 sm:pt-10" style={{ animationDelay: '200ms' }}>
+        <h2 className="mb-5 text-center font-display text-2xl uppercase tracking-wide text-white">Últimos partidos</h2>
         <MatchList matches={recent} />
       </section>
     </main>

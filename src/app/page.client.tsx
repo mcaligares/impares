@@ -31,18 +31,14 @@ export function HomeClient({
   };
 
   return (
-    <main className="relative mx-auto max-w-5xl px-6 pb-24 pt-8">
+    <main className="relative mx-auto max-w-5xl px-4 pb-24 pt-8 sm:px-6">
 
       <header className="a-fade-up mb-12 text-center">
-        <p className="mb-4 inline-block rounded-full border border-line bg-surface/60 px-3 py-1 text-xs uppercase tracking-[0.22em] text-cyan">
-          ⚽ Armador de equipos
-        </p>
-        <h1 className="font-display text-7xl uppercase leading-[0.88] tracking-tight text-white sm:text-8xl">
+        <h1 className="font-display text-6xl uppercase leading-[0.88] tracking-tight text-white sm:text-8xl">
           impa<span className="text-cyan">res</span>
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-balance text-base text-muted sm:text-lg">
-          Pegá la lista del grupo y armamos <span className="text-white">dos equipos parejos</span> al toque. Sin
-          discusiones, sin &ldquo;el equipo de los buenos&rdquo;.
+          Olvidate de <span className="text-white">hacer la elegida</span>, pegá la lista y mandá los equipos al grupo.
         </p>
       </header>
 
@@ -53,8 +49,8 @@ export function HomeClient({
         <RegisterForm onSubmit={handleSubmit} busy={pending} error={error} />
       </section>
 
-      <section className="a-fade-up mt-16" style={{ animationDelay: '220ms' }}>
-        <h2 className="mb-5 font-display text-2xl uppercase tracking-wide text-white">Últimos partidos</h2>
+      <section className="a-fade-up mt-14 pt-6 sm:mt-24 sm:pt-10" style={{ animationDelay: '220ms' }}>
+        <h2 className="mb-5 text-center font-display text-2xl uppercase tracking-wide text-white">Últimos partidos</h2>
         <MatchList matches={initialMatches} />
       </section>
     </main>

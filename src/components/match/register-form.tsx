@@ -32,7 +32,7 @@ export function RegisterForm({ onSubmit, busy = false, error }: RegisterFormProp
         onChange={(event) => setRaw(event.target.value)}
         rows={11}
         placeholder={'Futbol Lujan - 10/06 20:30hs\n1- Mati,3,4\n2- Gonza\n3- JP,5,1'}
-        className="w-full resize-y rounded-xl border border-line bg-black/40 p-4 font-mono text-sm text-white shadow-inner outline-none transition placeholder:text-muted/50 focus:border-cyan focus:shadow-[0_0_0_3px_rgba(45,212,255,0.12)]"
+        className="w-full resize-y rounded-xl border border-line bg-black/40 p-4 font-mono text-base text-white shadow-inner outline-none transition placeholder:text-muted/50 focus:border-cyan focus:shadow-[0_0_0_3px_rgba(45,212,255,0.12)]"
       />
       {error ? <p className="a-fade text-sm font-medium text-magenta">{error}</p> : null}
       <Button type="submit" disabled={busy} full>

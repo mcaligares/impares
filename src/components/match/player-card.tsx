@@ -29,7 +29,7 @@ export function PlayerCard({
         style={{ backgroundColor: color ?? 'var(--color-line)' }}
       />
       <div className="flex flex-1 flex-col justify-between gap-3 p-3">
-        <div className="font-display text-xl uppercase leading-none tracking-wide text-white">{player.name}</div>
+        <div className="font-display text-lg uppercase leading-none tracking-wide text-white break-words sm:text-xl">{player.name}</div>
         <div className="flex items-center gap-2">
           <img
             src={mobility.asset}
