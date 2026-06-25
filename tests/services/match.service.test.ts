@@ -9,7 +9,7 @@ vi.mock('@/repositories/squad.repository', () => ({
   insertSquad: vi.fn(),
   updateSquadStatus: vi.fn(),
 }));
-vi.mock('@/repositories/player.repository', () => ({ upsertPlayerBySlug: vi.fn() }));
+vi.mock('@/repositories/player.repository', () => ({ findPlayerBySlug: vi.fn(), upsertPlayerBySlug: vi.fn() }));
 vi.mock('@/repositories/match-player.repository', () => ({ insertMatchPlayers: vi.fn() }));
 
 const matchRepo = await import('@/repositories/match.repository');
@@ -52,6 +52,45 @@ describe('registerMatch', () => {
       status: 'processed',
       created_count: 1,
       updated_count: 1,
+    });
+  });
+
+  it('defaults missing characteristics to 3 when upserting players', async () => {
+    const db = createMockDb();
+    vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 'match-1' }));
+    vi.mocked(squadRepo.insertSquad).mockResolvedValue(createSquad({ id: 'squad-1' }));
+    vi.mocked(lineupRepo.insertMatchPlayers).mockResolvedValue([]);
+    vi.mocked(playerRepo.upsertPlayerBySlug)
+      .mockResolvedValueOnce({ player: createPlayerWithSlug('mati', 'mati'), inserted: true })
+      .mockResolvedValueOnce({ player: createPlayerWithSlug('gonza', 'Gonza'), inserted: false });
+
+    await registerMatch(db, parsedWith('mati', 'Gonza'));
+
+    const firstUpsert = vi.mocked(playerRepo.upsertPlayerBySlug).mock.calls[0][1];
+    expect(firstUpsert.attributes).toEqual({ mobility: 3, endurance: 3 });
+  });
+
+  it('preserves the stored value when the list omits a characteristic, 3 only if never had one', async () => {
+    const db = createMockDb();
+    vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 'match-1' }));
+    vi.mocked(squadRepo.insertSquad).mockResolvedValue(createSquad({ id: 'squad-1' }));
+    vi.mocked(lineupRepo.insertMatchPlayers).mockResolvedValue([]);
+    vi.mocked(playerRepo.findPlayerBySlug)
+      .mockResolvedValueOnce(createPlayerWithSlug('mati', 'mati', { attributes: { mobility: 4, endurance: 2 } }))
+      .mockResolvedValueOnce(null);
+    vi.mocked(playerRepo.upsertPlayerBySlug)
+      .mockResolvedValueOnce({ player: createPlayerWithSlug('mati', 'mati'), inserted: false })
+      .mockResolvedValueOnce({ player: createPlayerWithSlug('gonza', 'Gonza'), inserted: true });
+
+    await registerMatch(db, parsedWith('mati', 'Gonza'));
+
+    expect(vi.mocked(playerRepo.upsertPlayerBySlug).mock.calls[0][1].attributes).toEqual({
+      mobility: 4,
+      endurance: 2,
+    });
+    expect(vi.mocked(playerRepo.upsertPlayerBySlug).mock.calls[1][1].attributes).toEqual({
+      mobility: 3,
+      endurance: 3,
     });
   });
 

@@ -1,3 +1,4 @@
+import { scoringConfig } from '@/config/scoring.config';
 import type { PlayerAttributes } from '@/entities/player/player.schema';
 import type { Match } from '@/entities/match/match.entity';
 import type { MatchPlayer } from '@/entities/match-player/match-player.entity';
@@ -32,14 +33,15 @@ export function toRecentMatches(matches: Match[]): RecentMatch[] {
   }));
 }
 
-export function toPlayerAttributes(input: {
-  mobility?: number;
-  endurance?: number;
-}): PlayerAttributes | undefined {
-  const attributes: PlayerAttributes = {};
-  if (input.mobility !== undefined) attributes.mobility = input.mobility;
-  if (input.endurance !== undefined) attributes.endurance = input.endurance;
-  return Object.keys(attributes).length > 0 ? attributes : undefined;
+export function resolvePlayerAttributes(
+  input: { mobility?: number; endurance?: number },
+  existing: PlayerAttributes | null,
+): PlayerAttributes {
+  const base = scoringConfig.baselineRating;
+  return {
+    mobility: input.mobility ?? existing?.mobility ?? base,
+    endurance: input.endurance ?? existing?.endurance ?? base,
+  };
 }
 
 export function toLineupRows(

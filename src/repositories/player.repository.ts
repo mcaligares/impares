@@ -1,4 +1,4 @@
-import { getTableColumns, sql } from 'drizzle-orm';
+import { eq, getTableColumns, sql } from 'drizzle-orm';
 import { logger } from '@/lib/logger';
 import { player } from '@/entities/player/player.schema';
 import type { Player } from '@/entities/player/player.entity';
@@ -17,6 +17,19 @@ export type UpsertResult = {
   player: Player;
   inserted: boolean;
 };
+
+export async function findPlayerBySlug(db: DbClient, slug: string): Promise<Player | null> {
+  const start = performance.now();
+  log('findPlayerBySlug', 'start', { slug });
+  try {
+    const result = await db.select().from(player).where(eq(player.slug, slug)).limit(1);
+    log('findPlayerBySlug', 'done', { slug, ms: performance.now() - start });
+    return result[0] ?? null;
+  } catch (err) {
+    log.error('findPlayerBySlug', 'failed', { err, ms: performance.now() - start });
+    throw err;
+  }
+}
 
 export async function upsertPlayerBySlug(db: DbClient, input: UpsertPlayer): Promise<UpsertResult> {
   const start = performance.now();
