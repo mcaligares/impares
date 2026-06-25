@@ -85,17 +85,29 @@ export function TeamBoard({ teams, onBuild, busy = false }: TeamBoardProps) {
         </h2>
       </div>
 
-      <div key={drawId} className={`flex flex-col gap-6 ${hiding ? 'a-fade-out' : ''}`}>
-        <p
-          className="a-fade-up text-center text-xs uppercase tracking-[0.32em] text-muted"
-          style={{ animationDelay: `${revealDelay}ms` }}
-        >
-          Estos son los jugadores
-        </p>
-        <div className="grid gap-4 md:grid-cols-2">
-          <TeamColumn color={colorA} players={teams.teamA} revealDelay={revealDelay} playersDelay={playersDelay} />
-          <TeamColumn color={colorB} players={teams.teamB} revealDelay={revealDelay} playersDelay={playersDelay} />
-        </div>
+      <p
+        className="a-fade-up text-center text-xs uppercase tracking-[0.32em] text-muted"
+        style={{ animationDelay: `${revealDelay}ms` }}
+      >
+        Estos son los jugadores
+      </p>
+      <div className="grid gap-4 md:grid-cols-2">
+        <TeamColumn
+          color={colorA}
+          players={teams.teamA}
+          revealDelay={revealDelay}
+          playersDelay={playersDelay}
+          drawId={drawId}
+          hiding={hiding}
+        />
+        <TeamColumn
+          color={colorB}
+          players={teams.teamB}
+          revealDelay={revealDelay}
+          playersDelay={playersDelay}
+          drawId={drawId}
+          hiding={hiding}
+        />
       </div>
 
       <div className="flex justify-center">
@@ -112,11 +124,15 @@ function TeamColumn({
   players,
   revealDelay,
   playersDelay,
+  drawId,
+  hiding,
 }: {
   color: string;
   players: TeamPlayer[];
   revealDelay: number;
   playersDelay: number;
+  drawId: number;
+  hiding: boolean;
 }) {
   return (
     <section
@@ -127,7 +143,7 @@ function TeamColumn({
         boxShadow: `0 0 70px -34px ${color}`,
       }}
     >
-      <div className="grid grid-cols-2 gap-3">
+      <div key={drawId} className={`grid grid-cols-2 gap-3 ${hiding ? 'a-fade-out' : ''}`}>
         {players.map((player, index) => (
           <PlayerCard
             key={player.playerId}
