@@ -72,7 +72,7 @@ describe('registerMatch', () => {
 
   it('assigns the match two distinct team colors', async () => {
     const db = createMockDb();
-    vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 'match-1' }));
+    vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 1 }));
     vi.mocked(squadRepo.insertSquad).mockResolvedValue(createSquad({ id: 'squad-1' }));
     vi.mocked(lineupRepo.insertMatchPlayers).mockResolvedValue([]);
     vi.mocked(playerRepo.findPlayerBySlug).mockResolvedValue(null);
