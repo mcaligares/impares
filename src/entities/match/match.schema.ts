@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, smallint, timestamp, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, integer, text, smallint, timestamp, pgEnum } from 'drizzle-orm/pg-core';
 import { timestamps } from '@/lib/db/timestamps';
 
 export const matchStatus = pgEnum('match_status', [
@@ -9,7 +9,7 @@ export const matchStatus = pgEnum('match_status', [
 ]);
 
 export const match = pgTable('match', {
-  id: uuid('id').primaryKey().defaultRandom(),
+  id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
   match_date: timestamp('match_date').notNull(),
   location: text('location'),
   status: matchStatus('status').notNull().default('scheduled'),

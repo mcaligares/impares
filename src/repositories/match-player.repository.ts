@@ -16,7 +16,7 @@ export type LineupRow = {
 const log = logger.repo('match-player');
 
 export type InsertMatchPlayer = {
-  match_id: string;
+  match_id: number;
   player_id: string;
   batch_id?: string | null;
   team?: MatchPlayer['team'];
@@ -41,7 +41,7 @@ export async function insertMatchPlayers(
 
 export async function findMatchPlayersByMatch(
   db: DbClient,
-  matchId: string,
+  matchId: number,
 ): Promise<MatchPlayer[]> {
   const start = performance.now();
   log('findMatchPlayersByMatch', 'start', { matchId });
@@ -57,7 +57,7 @@ export async function findMatchPlayersByMatch(
 
 export async function findLineupWithPlayers(
   db: DbClient,
-  matchId: string,
+  matchId: number,
 ): Promise<LineupRow[]> {
   const start = performance.now();
   log('findLineupWithPlayers', 'start', { matchId });

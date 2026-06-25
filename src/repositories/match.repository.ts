@@ -25,7 +25,7 @@ export async function insertMatch(db: DbClient, input: InsertMatch): Promise<Mat
   }
 }
 
-export async function findMatchById(db: DbClient, id: string): Promise<Match | null> {
+export async function findMatchById(db: DbClient, id: number): Promise<Match | null> {
   const start = performance.now();
   log('findMatchById', 'start', { id });
   try {

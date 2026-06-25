@@ -4,7 +4,11 @@ import { MatchClient } from './page.client';
 
 export default async function MatchPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [teamsRes, matchesRes] = await Promise.all([getMatchTeams(id), listRecentMatches()]);
+  const matchId = Number(id);
+  if (Number.isNaN(matchId)) {
+    notFound();
+  }
+  const [teamsRes, matchesRes] = await Promise.all([getMatchTeams(matchId), listRecentMatches()]);
   if (!teamsRes.success || !teamsRes.data) {
     notFound();
   }

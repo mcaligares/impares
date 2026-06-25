@@ -55,7 +55,7 @@ describe('balanceMatchTeams', () => {
       createMatchPlayerRow('mp-4', { mobility: 2, endurance: 2 }),
     ]);
 
-    const result = await balanceMatchTeams(db, 'match-1');
+    const result = await balanceMatchTeams(db, 1);
 
     expect(result.teamA.players.length + result.teamB.players.length).toBe(4);
     expect(repo.assignTeam).toHaveBeenCalledWith(db, expect.any(Array), 'a');
@@ -69,7 +69,7 @@ describe('balanceMatchTeams', () => {
       createMatchPlayerRow('mp-2', { mobility: 1, endurance: 1 }, { team: 'a' }),
     ]);
 
-    await balanceMatchTeams(db, 'match-1');
+    await balanceMatchTeams(db, 1);
 
     expect(repo.assignTeam).toHaveBeenCalled();
   });
@@ -78,7 +78,7 @@ describe('balanceMatchTeams', () => {
     const db = createMockDb();
     vi.mocked(repo.findMatchPlayersByMatch).mockResolvedValue([]);
 
-    await expect(balanceMatchTeams(db, 'match-1')).rejects.toThrow('no players');
+    await expect(balanceMatchTeams(db, 1)).rejects.toThrow('no players');
     expect(repo.assignTeam).not.toHaveBeenCalled();
   });
 });

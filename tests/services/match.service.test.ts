@@ -30,7 +30,7 @@ describe('registerMatch', () => {
 
   it('creates the match, upserts players, links the lineup split into balanced teams, and records the squad', async () => {
     const db = createMockDb();
-    vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 'match-1' }));
+    vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 1 }));
     vi.mocked(squadRepo.insertSquad).mockResolvedValue(createSquad({ id: 'squad-1' }));
     vi.mocked(lineupRepo.insertMatchPlayers).mockResolvedValue([]);
     vi.mocked(playerRepo.upsertPlayerBySlug)
@@ -39,7 +39,7 @@ describe('registerMatch', () => {
 
     const result = await registerMatch(db, parsedWith('mati', 'Gonza'));
 
-    expect(result.matchId).toBe('match-1');
+    expect(result.matchId).toBe(1);
     expect(result.createdCount).toBe(1);
     expect(result.updatedCount).toBe(1);
 
@@ -57,7 +57,7 @@ describe('registerMatch', () => {
 
   it('defaults missing characteristics to 3 when upserting players', async () => {
     const db = createMockDb();
-    vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 'match-1' }));
+    vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 1 }));
     vi.mocked(squadRepo.insertSquad).mockResolvedValue(createSquad({ id: 'squad-1' }));
     vi.mocked(lineupRepo.insertMatchPlayers).mockResolvedValue([]);
     vi.mocked(playerRepo.upsertPlayerBySlug)
@@ -72,7 +72,7 @@ describe('registerMatch', () => {
 
   it('preserves the stored value when the list omits a characteristic, 3 only if never had one', async () => {
     const db = createMockDb();
-    vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 'match-1' }));
+    vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 1 }));
     vi.mocked(squadRepo.insertSquad).mockResolvedValue(createSquad({ id: 'squad-1' }));
     vi.mocked(lineupRepo.insertMatchPlayers).mockResolvedValue([]);
     vi.mocked(playerRepo.findPlayerBySlug)
@@ -107,7 +107,7 @@ describe('registerMatch', () => {
 
   it('marks the squad failed when persistence breaks mid-pipeline', async () => {
     const db = createMockDb();
-    vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 'match-1' }));
+    vi.mocked(matchRepo.insertMatch).mockResolvedValue(createMatch({ id: 1 }));
     vi.mocked(squadRepo.insertSquad).mockResolvedValue(createSquad({ id: 'squad-1' }));
     vi.mocked(playerRepo.upsertPlayerBySlug).mockRejectedValue(new Error('db down'));
 
