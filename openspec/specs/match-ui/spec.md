@@ -13,7 +13,7 @@ The landing page (`/`) SHALL present a text input for the pasted player list and
 #### Scenario: Successful registration navigates to the built match
 
 - **WHEN** the organizer pastes a valid list and submits
-- **THEN** the match is registered with its teams already balanced and the app navigates to `/matches/{id}`, which shows team A and team B
+- **THEN** the match is registered with its teams already balanced and the app navigates to `/partido/{id}`, which shows team A and team B
 
 #### Scenario: Empty or invalid input shows an error
 
@@ -32,7 +32,7 @@ Both the landing page and the match page SHALL show a list of the most recent ma
 #### Scenario: Recent matches are listed
 
 - **WHEN** a page that includes the recent-matches list loads
-- **THEN** the most recent matches are displayed, each linking to `/matches/{id}`
+- **THEN** the most recent matches are displayed, each linking to `/partido/{id}`
 
 #### Scenario: No matches yet
 
@@ -69,11 +69,11 @@ Computed scores and team totals SHALL remain internal to balancing and SHALL NEV
 
 ### Requirement: Match page builds and shows the two teams
 
-The match page (`/matches/[id]`) SHALL show the match's teams using `getMatchTeams`. A match reached from a successful registration SHALL open directly in the built state, showing team A and team B side by side with each player's name and characteristic badges (no totals, no balance indicator). When a match's roster is still unassigned (a fallback state, not produced by normal registration), the page SHALL show the roster with a "Build teams" control. A "Re-draw" control SHALL re-run the balance and refresh the view.
+The match page (`/partido/[id]`) SHALL show the match's teams using `getMatchTeams`. The `[id]` segment is the match's incremental integer id; a non-numeric id SHALL resolve to a not-found response. A match reached from a successful registration SHALL open directly in the built state, showing team A and team B side by side with each player's name and characteristic badges (no totals, no balance indicator). When a match's roster is still unassigned (a fallback state, not produced by normal registration), the page SHALL show the roster with a "Build teams" control. A "Re-draw" control SHALL re-run the balance and refresh the view.
 
 #### Scenario: Newly created match opens already divided
 
-- **WHEN** the organizer registers a match and lands on `/matches/{id}`
+- **WHEN** the organizer registers a match and lands on `/partido/{id}`
 - **THEN** the page shows team A and team B with player cards (badges, no totals) without requiring a manual build step
 
 #### Scenario: Re-draw overwrites the teams
@@ -85,6 +85,11 @@ The match page (`/matches/[id]`) SHALL show the match's teams using `getMatchTea
 
 - **WHEN** a match somehow has an unassigned roster and the organizer clicks "Build teams"
 - **THEN** the balance action runs and the page refreshes to show team A and team B
+
+#### Scenario: Non-numeric id is not found
+
+- **WHEN** a request reaches `/partido/{id}` with a non-numeric id
+- **THEN** the page resolves to a not-found response rather than querying for a match
 
 ### Requirement: Pages follow the orchestrator pattern
 
