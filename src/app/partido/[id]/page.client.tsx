@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { balanceTeams } from '@/actions/balance.actions';
 import { TeamBoard } from '@/components/match/team-board';
 import { MatchList } from '@/components/match/match-list';
-import { ShareMatch } from '@/components/match/share-match';
 import type { MatchTeams, RecentMatch } from '@/services/match.service';
 
 export function MatchClient({ teams, recent }: { teams: MatchTeams; recent: RecentMatch[] }) {
@@ -33,9 +32,6 @@ export function MatchClient({ teams, recent }: { teams: MatchTeams; recent: Rece
           {teams.match.location ?? 'Partido'}
         </h1>
         <p className="text-sm text-muted">{new Date(teams.match.match_date).toLocaleString('es-AR')}</p>
-        <div className="mt-5">
-          <ShareMatch matchId={teams.match.id} />
-        </div>
       </header>
 
       <section className="a-fade-up" style={{ animationDelay: '100ms' }}>

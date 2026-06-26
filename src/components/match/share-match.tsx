@@ -21,7 +21,7 @@ export function ShareMatch({ matchId }: ShareMatchProps) {
       rel="noopener noreferrer"
       className="relative inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-line bg-surface/50 px-6 py-3 text-sm font-bold uppercase tracking-[0.1em] text-muted transition-colors duration-150 hover:border-cyan hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
     >
-      Compartí esta elegida
+      Mandala al grupo
     </a>
   );
 }
