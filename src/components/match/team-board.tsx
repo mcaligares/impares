@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { PlayerCard } from './player-card';
+import { ShareMatch } from './share-match';
 import { Button } from '@/components/ui/button';
 import { colorConfig } from '@/config/color.config';
 import type { MatchTeams, TeamPlayer } from '@/services/match.service';
@@ -110,10 +111,11 @@ export function TeamBoard({ teams, onBuild, busy = false }: TeamBoardProps) {
         />
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex flex-wrap items-center justify-center gap-3">
         <Button variant="ghost" onClick={handleRebuild} disabled={busy || hiding}>
           {busy || hiding ? 'Rearmando…' : 'Rearmar equipos'}
         </Button>
+        <ShareMatch matchId={teams.match.id} />
       </div>
     </div>
   );
