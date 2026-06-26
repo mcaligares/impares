@@ -1,5 +1,9 @@
 export const appConfig = {
   name: 'My App',
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? '',
+  share: {
+    matchInvite: 'Miren este partido que armé:',
+  },
   defaultCurrency: 'ARS',
   pagination: {
     defaultPageSize: 20,
