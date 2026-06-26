@@ -1,4 +1,5 @@
 import { badgeConfig } from '@/config/badges.config';
+import { featuresConfig } from '@/config/features.config';
 import type { TeamPlayer } from '@/services/match.service';
 
 type Level = 1 | 2 | 3 | 4 | 5;
@@ -30,20 +31,22 @@ export function PlayerCard({
       />
       <div className="flex flex-1 flex-col justify-between gap-3 p-3">
         <div className="font-display text-lg uppercase leading-none tracking-wide text-white break-words sm:text-xl">{player.name}</div>
-        <div className="flex items-center gap-2">
-          <img
-            src={mobility.asset}
-            alt={mobility.name}
-            title={`Movilidad · ${mobility.name}`}
-            className="h-7 w-7 object-contain transition duration-200 group-hover:scale-110"
-          />
-          <img
-            src={endurance.asset}
-            alt={endurance.name}
-            title={`Resistencia · ${endurance.name}`}
-            className="h-7 w-7 object-contain transition duration-200 group-hover:scale-110"
-          />
-        </div>
+        {!featuresConfig.hidePlayerBadges && (
+          <div className="flex items-center gap-2">
+            <img
+              src={mobility.asset}
+              alt={mobility.name}
+              title={`Movilidad · ${mobility.name}`}
+              className="h-7 w-7 object-contain transition duration-200 group-hover:scale-110"
+            />
+            <img
+              src={endurance.asset}
+              alt={endurance.name}
+              title={`Resistencia · ${endurance.name}`}
+              className="h-7 w-7 object-contain transition duration-200 group-hover:scale-110"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
